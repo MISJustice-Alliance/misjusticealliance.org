@@ -1,0 +1,109 @@
+# Cloudflare Workers Configuration
+# Documentation: https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "misjustice-alliance"
+main = "cloudflare/workers/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Account ID (get from Cloudflare Dashboard)
+account_id = "" # Add your Cloudflare account ID
+
+# Workers configuration
+workers_dev = true
+route = { pattern = "misjusticealliance.org/*", zone_name = "misjusticealliance.org" }
+
+# Asset handling
+[site]
+bucket = "./public"
+
+# Environment variables (non-sensitive)
+[vars]
+ENVIRONMENT = "development"
+ENABLE_DEBUG = "false"
+CACHE_TTL = "3600"
+
+# KV Namespaces - Content Cache
+[[kv_namespaces]]
+binding = "CONTENT_CACHE"
+id = "" # Add your KV namespace ID
+preview_id = "" # Add your preview KV namespace ID
+
+# KV Namespaces - Analytics
+[[kv_namespaces]]
+binding = "ANALYTICS_KV"
+id = "" # Add your KV namespace ID
+preview_id = "" # Add your preview KV namespace ID
+
+# Durable Objects (if needed)
+# [[durable_objects.bindings]]
+# name = "RATE_LIMITER"
+# class_name = "RateLimiter"
+# script_name = "misjustice-alliance"
+
+# R2 Buckets (if needed for file storage)
+# [[r2_buckets]]
+# binding = "ENCRYPTED_STORAGE"
+# bucket_name = "misjustice-encrypted-storage"
+
+# Service bindings (if using multiple Workers)
+# [[services]]
+# binding = "AUTH_SERVICE"
+# service = "misjustice-auth"
+
+# Build configuration
+[build]
+command = "npm run workers:build"
+
+# Development environment
+[env.development]
+name = "misjustice-alliance-dev"
+vars = { ENVIRONMENT = "development", ENABLE_DEBUG = "true" }
+
+# Staging environment
+[env.staging]
+name = "misjustice-alliance-staging"
+route = { pattern = "staging.misjusticealliance.org/*", zone_name = "misjusticealliance.org" }
+vars = { ENVIRONMENT = "staging", ENABLE_DEBUG = "true" }
+
+# Production environment
+[env.production]
+name = "misjustice-alliance-prod"
+route = { pattern = "misjusticealliance.org/*", zone_name = "misjusticealliance.org" }
+vars = { ENVIRONMENT = "production", ENABLE_DEBUG = "false" }
+
+# Observability (optional)
+# [observability]
+# enabled = true
+
+# Limits and performance
+[limits]
+cpu_ms = 50
+
+# Secrets (set with: wrangler secret put SECRET_NAME)
+# These are NOT stored in this file - they're stored securely in Cloudflare
+# 
+# Required secrets:
+# - NOTION_TOKEN: Notion API integration token
+# - ENCRYPTION_KEY: For encrypting sensitive user data
+# - WEBHOOK_SECRET: For validating incoming webhooks
+# 
+# To set a secret:
+# wrangler secret put NOTION_TOKEN --env production
+# wrangler secret put ENCRYPTION_KEY --env production
+# wrangler secret put WEBHOOK_SECRET --env production
+
+# Triggers (Cron schedules for automated tasks)
+[triggers]
+# Regenerate sitemap daily at 2 AM UTC
+# crons = ["0 2 * * *"]
+
+# Unsafe bindings (use with caution)
+# [unsafe]
+# bindings = [
+#   { name = "EXAMPLE", type = "plain_text", text = "example" }
+# ]
+
+# Compatibility flags for specific features
+# [compatibility_flags]
+# - nodejs_compat: Enable Node.js compatibility mode

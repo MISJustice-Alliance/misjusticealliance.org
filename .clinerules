@@ -1,0 +1,449 @@
+# MISJustice Alliance - Cline AI Rules
+
+## Project Identity
+
+**Project**: misjusticealliance.org  
+**Organization**: Anonymous Legal Assistance Group (MISJustice Alliance)  
+**Mission**: Privacy-first legal advocacy and civil rights resource platform  
+**License**: Apache 2.0
+
+## Core Principles
+
+### 1. Privacy is Paramount
+- End-to-end encryption for all sensitive communications
+- Zero PII logging or tracking
+- Anonymous intake system
+- Privacy-preserving analytics only
+- GDPR/CCPA compliant by design
+
+### 2. Security by Default
+- Cloudflare WAF and DDoS protection
+- Strict CSP headers
+- HTTPS only (HSTS enforced)
+- Rate limiting on all endpoints
+- Regular security audits
+- Zero-trust architecture
+
+### 3. Accessibility for All
+- WCAG 2.1 AA minimum compliance
+- Semantic HTML5
+- Keyboard navigation
+- Screen reader compatibility
+- High contrast ratios
+- Responsive design (mobile-first)
+
+### 4. Open Source & Transparent
+- Apache 2.0 licensed
+- Public repository
+- Community contributions welcome
+- Transparent decision-making
+- Auditable code
+
+## Technical Stack
+
+```yaml
+Content Management:
+  CMS: Notion (headless)
+  Site Builder: Super.so
+  
+Infrastructure:
+  DNS: Cloudflare
+  CDN: Cloudflare
+  Hosting: Cloudflare Pages/Workers
+  Security: Cloudflare WAF
+  
+Development:
+  Version Control: GitHub
+  CI/CD: GitHub Actions
+  Language: JavaScript/TypeScript
+  Runtime: Cloudflare Workers
+  
+SEO/GEO:
+  robots.txt: Auto-generated via Workers
+  sitemap.xml: Auto-generated via Workers
+  llms.txt: AI crawler guidance
+  llms-full.txt: Comprehensive AI mapping
+  Schema.org: Structured data
+```
+
+## Cloudflare Workers Architecture
+
+### Required Workers
+
+1. **SEO Automation** (`seo-automation.js`)
+   ```javascript
+   // Auto-generate robots.txt and sitemap.xml
+   // Update on Notion content changes
+   // Cache with appropriate TTL
+   ```
+
+2. **GEO Optimization** (`geo-optimization.js`)
+   ```javascript
+   // Generate llms.txt for AI crawlers
+   // Structure content for LLM understanding
+   // Update with content changes
+   ```
+
+3. **Security Headers** (`security.js`)
+   ```javascript
+   // CSP, HSTS, X-Frame-Options
+   // Privacy-preserving headers
+   // CORS policies
+   ```
+
+4. **Privacy Analytics** (`analytics.js`)
+   ```javascript
+   // No PII collection
+   // Aggregate metrics only
+   // Cloudflare Analytics integration
+   ```
+
+5. **Rate Limiting** (`rate-limit.js`)
+   ```javascript
+   // Prevent abuse
+   // Protect intake forms
+   // DDoS mitigation
+   ```
+
+### Worker Development Standards
+
+**Best Practices**:
+- Keep Workers under 1MB bundled
+- Minimize cold start time
+- Use KV for caching (30-day TTL)
+- Implement proper error handling
+- Never log sensitive data
+- Use env variables for secrets
+- Test locally with Miniflare/Wrangler
+
+**Error Handling Pattern**:
+```javascript
+export default {
+  async fetch(request, env, ctx) {
+    try {
+      // Worker logic
+      const response = await handleRequest(request, env);
+      return response;
+    } catch (error) {
+      // Log error (no PII!)
+      console.error('Worker error:', error.message);
+      
+      // Return appropriate error response
+      return new Response(
+        JSON.stringify({ error: 'Service temporarily unavailable' }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+  }
+};
+```
+
+## Notion Integration
+
+### Database Structure
+
+**Content Database**:
+- Title (title)
+- Slug (text)
+- Content (rich text)
+- Published (checkbox)
+- SEO Title (text)
+- SEO Description (text)
+- Tags (multi-select)
+- Category (select)
+- Last Updated (last edited time)
+
+**Resource Database**:
+- Resource Name (title)
+- Type (select: Legal, Medical, Financial, etc.)
+- Description (rich text)
+- Link (URL)
+- Privacy Verified (checkbox)
+- Last Verified (date)
+
+**FAQ Database**:
+- Question (title)
+- Answer (rich text)
+- Category (select)
+- Keywords (multi-select)
+
+### Super.so Configuration
+
+**Required Settings**:
+- Custom domain: misjusticealliance.org
+- SEO optimization: Enabled
+- Pretty URLs: Enabled
+- Social previews: Configured
+- Custom CSS: Brand-aligned
+- Analytics: Privacy-preserving only
+
+## SEO/GEO Strategy
+
+### Traditional SEO
+
+**Metadata Requirements**:
+```html
+<title>Page Title - MISJustice Alliance</title>
+<meta name="description" content="150-160 character description">
+<meta property="og:title" content="Social Share Title">
+<meta property="og:description" content="Social description">
+<meta property="og:image" content="https://misjusticealliance.org/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+```
+
+**Schema.org Markup**:
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Anonymous Legal Assistance Group",
+  "alternateName": "MISJustice Alliance",
+  "url": "https://misjusticealliance.org",
+  "description": "Privacy-first legal advocacy platform",
+  "knowsAbout": [
+    "Civil Rights",
+    "Legal Advocacy",
+    "Police Misconduct",
+    "Institutional Corruption"
+  ]
+}
+```
+
+### Generative Engine Optimization
+
+**llms.txt Structure**:
+```
+# MISJustice Alliance
+
+## About
+Anonymous Legal Assistance Group providing privacy-first legal advocacy...
+
+## Key Resources
+- Civil Rights Resources: /resources/civil-rights
+- Legal Intake (Anonymous): /intake
+- Resource Directory: /directory
+
+## Focus Areas
+- Civil rights violations
+- Police misconduct
+- Legal malpractice
+- Institutional corruption
+- Whistleblower protection
+
+## Contact
+- Anonymous Intake: [encrypted form]
+- General: Use contact form (no email harvesting)
+```
+
+## Privacy & Security Implementation
+
+### Privacy Requirements
+
+**Data Minimization**:
+- Collect only essential information
+- No analytics cookies
+- No third-party tracking
+- No social media pixels
+- No email harvesting
+
+**Encryption**:
+- End-to-end encrypted intake forms
+- TLS 1.3 minimum
+- No plaintext storage of sensitive data
+- Secure key management
+
+**Anonymity Protection**:
+- No IP logging
+- No user fingerprinting
+- Tor-friendly (no CAPTCHA abuse)
+- Anonymous form submissions
+- No required authentication
+
+### Security Headers
+
+**Required Headers**:
+```javascript
+const securityHeaders = {
+  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';",
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'no-referrer',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+};
+```
+
+## Content Standards
+
+### Legal Disclaimer Template
+
+```markdown
+**Legal Disclaimer**: The information provided on this website is for general 
+informational and educational purposes only. It is not intended to be, and 
+should not be construed as, legal advice. The Anonymous Legal Assistance Group 
+is not a law firm and does not provide legal representation. Anonymous intake 
+does not create an attorney-client relationship. For legal advice specific to 
+your situation, please consult with a licensed attorney in your jurisdiction.
+```
+
+### Accessibility Requirements
+
+**Minimum Standards**:
+- All images have meaningful alt text
+- Form labels properly associated
+- Heading hierarchy logical (H1 → H2 → H3)
+- Color contrast 4.5:1 minimum
+- Focus indicators visible
+- Keyboard navigation functional
+- ARIA labels where needed
+- Skip navigation links
+- Responsive text sizing
+
+**Testing**:
+- axe DevTools
+- WAVE browser extension
+- Manual keyboard testing
+- Screen reader testing (NVDA/JAWS)
+
+## Development Workflow
+
+### Branch Strategy
+```
+main (production)
+  ├── develop (staging)
+  │   ├── feature/seo-automation
+  │   ├── feature/intake-form
+  │   └── fix/accessibility-issue
+```
+
+### Commit Message Format
+```
+type(scope): subject
+
+[optional body]
+
+[optional footer]
+
+Types: feat, fix, docs, style, refactor, test, chore
+Example: feat(workers): add SEO automation worker
+```
+
+### CI/CD Pipeline
+
+**GitHub Actions Workflow**:
+1. Lint and format check (ESLint, Prettier)
+2. Unit tests (Jest)
+3. Integration tests
+4. Security scan (npm audit, Snyk)
+5. Accessibility test (axe)
+6. Build Workers
+7. Deploy to staging
+8. Manual approval gate
+9. Deploy to production
+10. Post-deployment tests
+
+## Testing Standards
+
+### Test Coverage Requirements
+- Workers: 80% minimum coverage
+- Critical paths: 100% coverage
+- Security functions: 100% coverage
+
+### Test Types
+
+**Unit Tests** (Jest):
+```javascript
+describe('SEO Automation Worker', () => {
+  it('generates valid robots.txt', async () => {
+    const response = await worker.fetch(new Request('https://example.com/robots.txt'));
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toBe('text/plain');
+  });
+});
+```
+
+**Integration Tests**:
+- Notion API integration
+- Super.so deployment
+- Cloudflare Workers deployment
+- End-to-end workflows
+
+**Security Tests**:
+- OWASP Top 10 coverage
+- Dependency vulnerability scanning
+- CSP validation
+- Rate limiting effectiveness
+
+## Monitoring & Maintenance
+
+### Performance Metrics
+- Page load time: <3 seconds
+- Core Web Vitals: All "Good"
+- Lighthouse score: 90+ (all categories)
+- Worker execution time: <50ms average
+
+### Availability Targets
+- Uptime: 99.9%
+- Error rate: <0.1%
+- Response time: <200ms (p95)
+
+### Monitoring Tools
+- Cloudflare Analytics
+- GitHub Actions status
+- Uptime monitoring (UptimeRobot)
+- Error tracking (privacy-preserving)
+
+## Support & Documentation
+
+### Internal Documentation
+- `/docs/architecture.md` - System architecture
+- `/docs/deployment.md` - Deployment guide
+- `/docs/privacy.md` - Privacy implementation
+- `/docs/security.md` - Security measures
+- `/docs/contributing.md` - Contribution guidelines
+
+### External Resources
+- Cloudflare Workers: https://developers.cloudflare.com/workers/
+- Notion API: https://developers.notion.com/
+- Super.so: https://super.so/help
+- WCAG Guidelines: https://www.w3.org/WAI/WCAG21/quickref/
+
+## Code Review Checklist
+
+Before submitting PR:
+- [ ] Privacy: No PII logging
+- [ ] Security: Headers and validation
+- [ ] Accessibility: WCAG compliance
+- [ ] Performance: Load time <3s
+- [ ] SEO: Metadata complete
+- [ ] Tests: All passing, coverage met
+- [ ] Documentation: Updated
+- [ ] Legal: Disclaimers present
+
+## Emergency Response
+
+### Security Incident
+1. Disable affected Worker/endpoint
+2. Notify team immediately
+3. Assess scope and impact
+4. Document incident
+5. Patch vulnerability
+6. Deploy fix
+7. Post-mortem analysis
+
+### Service Outage
+1. Check Cloudflare status
+2. Review recent deployments
+3. Rollback if necessary
+4. Communicate with users
+5. Investigate root cause
+6. Implement fix
+7. Update runbooks
+
+---
+
+**Remember**: Every line of code serves our mission to provide secure, private, and accessible legal advocacy resources to those who need them most.

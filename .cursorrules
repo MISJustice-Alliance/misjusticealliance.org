@@ -1,0 +1,333 @@
+# MISJustice Alliance - Cursor AI Rules
+
+## Project Overview
+
+This is the **misjusticealliance.org** website - the public-facing platform for the Anonymous Legal Assistance Group (MISJustice Alliance). This is a privacy-first, open-source legal advocacy and civil rights resource platform.
+
+**Core Mission**: Provide anonymous legal assistance, resources, and advocacy for individuals facing systemic institutional corruption, civil rights violations, and abuse of power.
+
+**Critical Values**:
+- **Privacy & Anonymity First**: End-to-end encryption, no tracking, anonymous intake
+- **Security**: Zero-trust architecture, secure by default
+- **Accessibility**: WCAG 2.1 AA compliance minimum
+- **Transparency**: Open-source, auditable, community-driven
+
+## Technical Architecture
+
+### Content Management
+- **Primary CMS**: Notion workspace as headless CMS
+- **Site Generation**: Super.so for Notion-to-website conversion
+- **Domain**: misjusticealliance.org
+- **Hosting**: Cloudflare Pages/Workers
+
+### Infrastructure Stack
+- **DNS & CDN**: Cloudflare DNS and CDN
+- **Security**: Cloudflare WAF, DDoS protection, SSL/TLS
+- **Workers**: Cloudflare Workers for:
+  - SEO file automation (robots.txt, sitemap.xml)
+  - GEO file generation (llms.txt, llms-full.txt)
+  - Privacy-preserving analytics
+  - Security headers and CSP
+  - Rate limiting and abuse prevention
+
+### Repository Management
+- **Version Control**: GitHub
+- **CI/CD**: GitHub Actions for automated deployments
+- **Code Quality**: ESLint, Prettier, automated testing
+- **Documentation**: Markdown in `/docs` directory
+
+## Development Guidelines
+
+### Code Style & Quality
+
+1. **JavaScript/TypeScript Standards**
+   - Use ES6+ modern JavaScript
+   - Prefer async/await over promises
+   - Use strict mode
+   - No console.log in production code
+   - Comprehensive error handling
+
+2. **Cloudflare Workers**
+   - Follow Workers best practices
+   - Minimize cold start time
+   - Use KV for caching when appropriate
+   - Implement proper error boundaries
+   - Use Durable Objects for stateful operations when needed
+
+3. **Privacy & Security**
+   - **NEVER** log personally identifiable information (PII)
+   - Implement CSP headers strictly
+   - Use HTTPS only, HSTS enabled
+   - No third-party tracking or analytics that compromise privacy
+   - Sanitize all user inputs
+   - Implement rate limiting on all endpoints
+
+### SEO & GEO Optimization
+
+**Traditional SEO Requirements**:
+- Semantic HTML5 structure
+- Proper heading hierarchy (H1-H6)
+- Meta tags (title, description, OG tags)
+- Schema.org structured data (Organization, WebSite, BreadcrumbList)
+- Clean URL structure
+- Image alt text and lazy loading
+- Mobile-first responsive design
+
+**Generative Engine Optimization (GEO)**:
+- Create and maintain `/llms.txt` file with key content areas
+- Create and maintain `/llms-full.txt` with comprehensive content mapping
+- Structure content for AI understanding:
+  - Clear entity relationships
+  - Fact-based, verifiable information
+  - Structured Q&A sections
+  - Contextual metadata
+
+**Target Keywords** (for SEO/GEO):
+- "anonymous legal assistance"
+- "civil rights violations help"
+- "police misconduct resources"
+- "legal advocacy Montana"
+- "whistleblower protection"
+- "institutional corruption"
+- "free legal resources"
+
+### Notion Integration
+
+**Workspace Structure**:
+- Use Notion databases for content management
+- Implement proper database relationships
+- Tag content for SEO metadata
+- Use status fields for publication workflow
+- Implement access controls for sensitive content
+
+**Super.so Configuration**:
+- Custom domain setup
+- SEO optimization in Super.so settings
+- Social media preview optimization
+- Custom CSS for branding
+- Analytics integration (privacy-preserving)
+
+### Accessibility Requirements
+
+**WCAG 2.1 AA Compliance Minimum**:
+- Semantic HTML elements
+- ARIA labels where appropriate
+- Keyboard navigation support
+- Color contrast ratios (4.5:1 minimum)
+- Text alternatives for non-text content
+- Responsive font sizing (rem/em units)
+- Focus indicators on interactive elements
+
+### Privacy-First Development
+
+**Data Handling**:
+- Minimize data collection
+- No personal data without explicit consent
+- Implement data retention policies
+- Provide data export capabilities
+- Clear privacy policy and terms
+
+**Anonymous Intake System**:
+- No user authentication required for basic access
+- Optional encrypted contact forms
+- No IP logging or tracking
+- Use ephemeral storage where possible
+
+### File Structure
+
+```
+/
+├── .ai/                     # AI IDE configuration
+├── .github/                 # GitHub workflows and configs
+│   └── workflows/          # CI/CD pipelines
+├── cloudflare/             # Cloudflare Workers
+│   ├── workers/           # Individual Workers
+│   ├── kv/                # KV namespace configs
+│   └── wrangler.toml      # Wrangler configuration
+├── docs/                   # Project documentation
+├── notion/                 # Notion workspace configs
+│   ├── databases/         # Database schemas
+│   └── templates/         # Page templates
+├── public/                 # Static assets
+│   ├── robots.txt         # SEO
+│   ├── sitemap.xml        # SEO
+│   ├── llms.txt           # GEO
+│   └── llms-full.txt      # GEO
+├── scripts/               # Automation scripts
+├── tests/                 # Test suites
+├── .cursorrules           # This file
+├── .clinerules            # Cline AI rules
+├── .clauderc              # Claude AI config
+├── .gitignore
+├── LICENSE
+├── README.md
+└── package.json
+```
+
+## Cloudflare Workers Development
+
+### Workers Best Practices
+
+1. **SEO Automation Worker** (`/cloudflare/workers/seo-automation.js`)
+   - Generate robots.txt dynamically
+   - Generate sitemap.xml from Notion database
+   - Update on content changes via webhooks
+   - Cache responses appropriately
+
+2. **GEO Optimization Worker** (`/cloudflare/workers/geo-optimization.js`)
+   - Generate llms.txt with key content areas
+   - Generate llms-full.txt with comprehensive mapping
+   - Structure content for AI crawler understanding
+   - Update when Notion content changes
+
+3. **Privacy Analytics Worker** (`/cloudflare/workers/analytics.js`)
+   - Privacy-preserving analytics (no PII)
+   - Aggregate metrics only
+   - No third-party tracking
+   - Compliance with privacy regulations
+
+4. **Security Headers Worker** (`/cloudflare/workers/security.js`)
+   - Implement CSP headers
+   - HSTS headers
+   - X-Frame-Options
+   - X-Content-Type-Options
+   - Referrer-Policy
+
+### Worker Template
+
+```javascript
+export default {
+  async fetch(request, env, ctx) {
+    try {
+      // Implement Worker logic here
+      // Always use proper error handling
+      // Cache responses where appropriate
+      // Return Response object
+    } catch (error) {
+      // Never log PII or sensitive data
+      console.error('Worker error:', error.message);
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  }
+};
+```
+
+## Content Guidelines
+
+### Tone & Voice
+- **Professional but Accessible**: Legal topics made understandable
+- **Empathetic**: Recognize user vulnerability
+- **Clear & Direct**: No legal jargon without explanation
+- **Empowering**: Focus on rights and remedies
+- **Neutral**: Stick to facts and evidence
+
+### Content Structure
+- Lead with key information (inverted pyramid)
+- Use clear headings and subheadings
+- Break up long text with lists and visuals
+- Provide examples and case studies
+- Include clear calls-to-action
+
+### Legal Disclaimer
+Always include appropriate disclaimers:
+- Not a substitute for legal representation
+- For informational purposes only
+- Consult licensed attorney for legal advice
+- Anonymous intake does not create attorney-client relationship
+
+## Testing Requirements
+
+### Manual Testing Checklist
+- [ ] Mobile responsiveness (all breakpoints)
+- [ ] Cross-browser compatibility (Chrome, Firefox, Safari, Edge)
+- [ ] Keyboard navigation
+- [ ] Screen reader compatibility
+- [ ] Privacy features (no tracking/logging)
+- [ ] Form submissions (encrypted)
+- [ ] Page load performance (<3 seconds)
+
+### Automated Testing
+- Unit tests for Workers
+- Integration tests for workflows
+- Accessibility testing (axe-core)
+- Performance testing (Lighthouse CI)
+- Security testing (OWASP)
+
+## Deployment Process
+
+### Pre-Deployment Checklist
+- [ ] All tests passing
+- [ ] Privacy review completed
+- [ ] Security headers configured
+- [ ] SEO files generated
+- [ ] GEO files updated
+- [ ] Performance benchmarks met
+- [ ] Accessibility audit passed
+- [ ] Legal review (if content changes)
+
+### Deployment Steps
+1. Merge to `main` branch
+2. GitHub Actions triggers build
+3. Cloudflare Workers deploy
+4. Super.so updates (if Notion changes)
+5. Verify deployment in production
+6. Monitor for errors (first 24 hours)
+
+## Security Protocols
+
+### Threat Model Considerations
+- DDoS attacks on legal resources
+- Doxxing attempts of anonymous volunteers
+- Data breaches of intake forms
+- Social engineering attacks
+- Supply chain attacks
+
+### Security Measures
+- Cloudflare WAF rules
+- Rate limiting on all endpoints
+- Regular security audits
+- Dependency scanning
+- CSP implementation
+- No inline scripts
+- SRI for external resources
+
+## Support & Resources
+
+### Key Documentation
+- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
+- [Super.so Documentation](https://super.so/help)
+- [Notion API Reference](https://developers.notion.com/)
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+
+### Getting Help
+- Review `/docs` directory
+- Check `.ai/` configuration files
+- Consult MISJustice Alliance team
+- GitHub Issues for bugs/features
+
+## Critical Reminders
+
+⚠️ **ALWAYS PRIORITIZE**:
+1. User privacy and anonymity
+2. Security over convenience
+3. Accessibility for all users
+4. Legal and ethical compliance
+5. Performance and reliability
+
+🔒 **NEVER**:
+- Log PII or sensitive information
+- Use third-party tracking
+- Compromise user anonymity
+- Deploy without security review
+- Skip accessibility testing
+
+📝 **DOCUMENT**:
+- All API integrations
+- Privacy considerations
+- Security decisions
+- Accessibility features
+- Performance optimizations
+
+---
+
+*This configuration ensures AI assistants understand the critical nature of this legal advocacy platform and the non-negotiable requirements around privacy, security, and accessibility.*

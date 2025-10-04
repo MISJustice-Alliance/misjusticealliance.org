@@ -1,0 +1,405 @@
+# Claude AI Configuration - MISJustice Alliance
+
+## Project Overview
+
+**Name**: MISJustice Alliance Website  
+**Domain**: misjusticealliance.org  
+**Repository**: misjusticealliance.org  
+**Mission**: Privacy-first legal advocacy and civil rights resource platform
+
+## Organization Context
+
+The **Anonymous Legal Assistance Group** (MISJustice Alliance) is a civil litigation advocacy collective dedicated to defending constitutional and civil rights of individuals victimized by systemic corruption, police misconduct, prosecutorial abuse, and institutional failures.
+
+### Core Values
+- **Privacy & Anonymity**: Strict confidentiality for volunteers and users
+- **Security**: Zero-trust architecture, encryption by default
+- **Accessibility**: WCAG 2.1 AA compliance minimum
+- **Transparency**: Open-source, auditable, community-driven
+- **Justice**: Empowering individuals against institutional abuse
+
+### Areas of Focus
+- Civil rights violations
+- Police misconduct and abuse of power
+- Prosecutorial misconduct
+- Legal malpractice
+- Institutional corruption
+- Whistleblower protection
+- Inter-jurisdictional harassment coordination
+
+## Technical Architecture
+
+### Stack Overview
+```yaml
+Content:
+  CMS: Notion (headless)
+  Builder: Super.so
+  
+Infrastructure:
+  Platform: Cloudflare (Workers, Pages, KV)
+  DNS: Cloudflare
+  CDN: Cloudflare
+  Security: Cloudflare WAF
+  
+Development:
+  VCS: GitHub
+  CI/CD: GitHub Actions
+  Language: JavaScript/TypeScript
+  Runtime: Cloudflare Workers (V8 Isolates)
+  
+Optimization:
+  SEO: robots.txt, sitemap.xml (auto-generated)
+  GEO: llms.txt, llms-full.txt
+  Analytics: Privacy-preserving only
+```
+
+### Key Components
+
+1. **Cloudflare Workers**
+   - SEO automation (robots.txt, sitemap.xml)
+   - GEO optimization (llms.txt for AI crawlers)
+   - Security headers (CSP, HSTS, etc.)
+   - Privacy analytics (no PII)
+   - Rate limiting and abuse prevention
+
+2. **Notion Integration**
+   - Content management via Notion API
+   - Database-driven architecture
+   - Real-time updates via webhooks
+   - SEO metadata in custom properties
+
+3. **Super.so Deployment**
+   - Notion-to-website conversion
+   - Custom domain configuration
+   - Brand-aligned styling
+   - Social media optimization
+
+## Development Guidelines
+
+### Privacy-First Principles
+
+**Always**:
+- Minimize data collection
+- Use end-to-end encryption for sensitive data
+- Implement anonymous intake systems
+- Avoid third-party tracking
+- Log errors without PII
+- Use privacy-preserving analytics only
+
+**Never**:
+- Log IP addresses or user agents
+- Implement user fingerprinting
+- Use Google Analytics, Facebook Pixel, etc.
+- Store plaintext sensitive information
+- Require authentication for public resources
+- Harvest email addresses
+
+### Security Requirements
+
+**Mandatory Security Measures**:
+- Cloudflare WAF with custom rules
+- Rate limiting on all endpoints
+- CSP headers (strict)
+- HTTPS only (HSTS enforced)
+- Input validation and sanitization
+- Error handling without information disclosure
+- Regular security audits
+
+**Security Headers Template**:
+```javascript
+{
+  'Content-Security-Policy': "default-src 'self'; script-src 'self'; ...",
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'no-referrer',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+}
+```
+
+### Accessibility Standards
+
+**WCAG 2.1 Level AA Compliance**:
+- Semantic HTML5 elements
+- Proper heading hierarchy (H1 → H2 → H3)
+- ARIA labels for complex interactions
+- Keyboard navigation support
+- Color contrast ratios (4.5:1 minimum)
+- Focus indicators on all interactive elements
+- Screen reader compatibility
+- Responsive text sizing (rem/em units)
+
+### Code Style
+
+**Modern JavaScript**:
+```javascript
+// Use async/await
+async function fetchData(url, token) {
+  try {
+    const response = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch error:', error.message);
+    throw error;
+  }
+}
+
+// Prefer const, use let sparingly, never var
+const config = { timeout: 5000 };
+let retryCount = 0;
+
+// Descriptive naming
+const encryptedUserMessage = await encrypt(message, key);
+```
+
+## SEO & GEO Strategy
+
+### Traditional SEO
+
+**Metadata Structure**:
+- Page titles: 50-60 characters
+- Meta descriptions: 150-160 characters
+- OpenGraph tags for social sharing
+- Schema.org structured data
+- Clean URL structure
+- Image alt text
+- Internal linking
+
+**Target Keywords**:
+- "anonymous legal assistance"
+- "civil rights violations help"
+- "police misconduct resources"
+- "legal advocacy"
+- "whistleblower protection"
+- "institutional corruption"
+
+### Generative Engine Optimization
+
+**llms.txt Purpose**: Guide AI systems to understand and accurately represent the site's content.
+
+**Structure**:
+```
+# MISJustice Alliance
+
+## Mission
+Brief mission statement
+
+## Services
+- Anonymous legal intake
+- Resource directory
+- Civil rights advocacy
+
+## Focus Areas
+- Civil rights violations
+- Police misconduct
+- Legal malpractice
+- Institutional corruption
+
+## Key Resources
+[Links to main resources]
+
+## Contact
+[How to reach us anonymously]
+```
+
+## Cloudflare Workers Development
+
+### Worker Pattern
+```javascript
+export default {
+  async fetch(request, env, ctx) {
+    try {
+      // Route handling
+      const url = new URL(request.url);
+      
+      if (url.pathname === '/robots.txt') {
+        return generateRobotsTxt();
+      }
+      
+      if (url.pathname === '/sitemap.xml') {
+        return await generateSitemap(env);
+      }
+      
+      // Default response
+      return new Response('Not Found', { status: 404 });
+      
+    } catch (error) {
+      console.error('Worker error:', error.message);
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  }
+};
+```
+
+### KV Storage
+```javascript
+// Cache frequently accessed data
+await env.CONTENT_CACHE.put('key', JSON.stringify(data), {
+  expirationTtl: 3600 // 1 hour
+});
+
+// Retrieve cached data
+const cached = await env.CONTENT_CACHE.get('key', 'json');
+```
+
+## Notion API Integration
+
+### Fetching Content
+```javascript
+async function getNotionDatabase(databaseId, env) {
+  const response = await fetch(
+    `https://api.notion.com/v1/databases/${databaseId}/query`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.NOTION_TOKEN}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        filter: {
+          property: 'Published',
+          checkbox: { equals: true }
+        }
+      })
+    }
+  );
+  
+  return await response.json();
+}
+```
+
+### Content Structure
+**Page Properties**:
+- Title (title)
+- Slug (text)
+- Content (rich text)
+- Published (checkbox)
+- SEO Title (text)
+- SEO Description (text)
+- Tags (multi-select)
+- Category (select)
+- Last Updated (last edited time)
+
+## Testing & Quality Assurance
+
+### Test Coverage
+- Unit tests: 80% minimum
+- Integration tests: Critical paths
+- Security tests: All endpoints
+- Accessibility tests: All pages
+- Performance tests: Load time <3s
+
+### Testing Tools
+- Jest (unit/integration)
+- Miniflare (Worker testing)
+- axe-core (accessibility)
+- Lighthouse CI (performance)
+- OWASP ZAP (security)
+
+## Deployment Process
+
+### Pre-Deployment Checklist
+- [ ] All tests passing
+- [ ] Privacy review completed
+- [ ] Security headers configured
+- [ ] SEO files generated
+- [ ] GEO files updated
+- [ ] Accessibility audit passed
+- [ ] Performance benchmarks met
+- [ ] Documentation updated
+
+### CI/CD Pipeline
+1. Push to GitHub
+2. Run linters (ESLint, Prettier)
+3. Run tests (Jest)
+4. Security scan (npm audit)
+5. Build Workers
+6. Deploy to staging
+7. Manual approval
+8. Deploy to production
+9. Post-deployment verification
+
+## Content Guidelines
+
+### Legal Disclaimer
+Always include on legal content:
+
+```markdown
+**Disclaimer**: This information is for general educational purposes only 
+and does not constitute legal advice. The Anonymous Legal Assistance Group 
+is not a law firm. Anonymous intake does not create an attorney-client 
+relationship. Consult a licensed attorney for legal advice specific to 
+your situation.
+```
+
+### Tone & Voice
+- **Professional yet accessible**: Legal topics explained clearly
+- **Empathetic**: Recognize user vulnerability
+- **Empowering**: Focus on rights and remedies
+- **Factual**: Evidence-based, not sensational
+- **Respectful**: Maintain dignity for all
+
+## Common Scenarios
+
+### Adding New Content Page
+1. Create page in Notion workspace
+2. Set SEO properties (title, description, slug)
+3. Mark as "Published"
+4. Super.so auto-updates
+5. Sitemap regenerates via Worker
+
+### Implementing New Feature
+1. Create feature branch
+2. Develop with tests
+3. Security review
+4. Accessibility check
+5. PR with documentation
+6. Review and approval
+7. Merge and deploy
+
+### Security Incident Response
+1. Disable affected component
+2. Assess scope and impact
+3. Notify team
+4. Patch vulnerability
+5. Deploy fix
+6. Post-mortem documentation
+
+## Resources
+
+### Documentation
+- Cloudflare Workers: https://developers.cloudflare.com/workers/
+- Notion API: https://developers.notion.com/
+- Super.so: https://super.so/help
+- WCAG 2.1: https://www.w3.org/WAI/WCAG21/quickref/
+
+### Internal Docs
+- `/docs/architecture.md` - System design
+- `/docs/deployment.md` - Deploy guide
+- `/docs/privacy.md` - Privacy implementation
+- `/docs/security.md` - Security measures
+- `/docs/contributing.md` - Contribution guide
+
+## AI Assistant Guidelines
+
+When assisting with this project:
+
+1. **Prioritize Privacy**: Always suggest privacy-preserving solutions
+2. **Security First**: Include security considerations in all code
+3. **Accessibility**: Ensure WCAG compliance in UI components
+4. **Performance**: Optimize for fast load times
+5. **Documentation**: Provide clear, comprehensive explanations
+
+**Critical Reminders**:
+- Never suggest tracking or analytics that compromise privacy
+- Always include error handling
+- Consider edge cases and failure scenarios
+- Test accessibility of all UI components
+- Document security decisions
+
+---
+
+*This configuration helps Claude understand the critical nature of this legal advocacy platform and the non-negotiable requirements around privacy, security, and accessibility.*
